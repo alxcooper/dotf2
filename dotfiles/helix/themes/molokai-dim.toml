@@ -1,0 +1,4 @@
+inherits = "molokai"
+
+"ui.virtual.whitespace" = { fg = "#3a3a3a" }
+

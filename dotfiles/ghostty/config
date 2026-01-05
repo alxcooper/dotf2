@@ -8,7 +8,7 @@
 
 theme = "Iterm2 Tango Dark"
 # theme = "Andromeda"
-background-opacity = 0.8
+background-opacity = 0.9
 background-blur = true
 background = "#0e100a"
 foreground = "#c0c0c0"
