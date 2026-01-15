@@ -55,3 +55,6 @@ dotfiles/vim/pack
 
 # Ignore vim user's wordlist
 dotfiles/nvim/spell/*add*
+
+# Ansible vault password
+.vault_pass

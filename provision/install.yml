@@ -156,3 +156,28 @@
     - name: symlink ghostty config
       file: src={{ dotfiles_dir }}/ghostty dest=~/.config/ghostty state=link force=yes
       tags: ghostty
+
+    # Claude Code configuration
+    - name: create claude config directory
+      file: path=~/.claude state=directory
+      tags: claude
+
+    - name: symlink claude settings
+      file: src={{ dotfiles_dir }}/claude/settings.json dest=~/.claude/settings.json state=link force=yes
+      tags: claude
+
+    - name: symlink claude md
+      file: src={{ dotfiles_dir }}/claude/CLAUDE.md dest=~/.claude/CLAUDE.md state=link force=yes
+      tags: claude
+
+    - name: load secrets
+      include_vars:
+        file: secrets.yml
+      tags: claude
+
+    - name: generate mcp.json from template
+      template:
+        src: "{{ dotfiles_dir }}/claude/mcp.json.j2"
+        dest: ~/.mcp.json
+        mode: '0600'
+      tags: claude
