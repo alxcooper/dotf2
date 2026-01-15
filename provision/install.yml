@@ -7,6 +7,11 @@
     dotfiles_dir: '{{ lookup("env", "PWD") }}/dotfiles'
     ansible_python_interpreter: /opt/homebrew/bin/python3.13
   tasks:
+    - name: tap bun repository
+      homebrew_tap:
+        name: oven-sh/bun
+      tags: brew
+
     - name: install homebrew packages
       homebrew:
         name:
@@ -43,6 +48,7 @@
           - yq
           - zoxide
           - zsh
+          - oven-sh/bun/bun
           # - postgresql@17
           # - redis
         state: present
