@@ -2,5 +2,22 @@
   "alwaysThinkingEnabled": true,
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
-  }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(make lint:*)",
+      "Bash(npm install:*)",
+      "Bash(npx eslint:*)",
+      "Bash(bun --version:*)",
+      "mcp__trello__get_card"
+    ],
+    "deny": [
+      "Read(**/.env.local)",
+      "Read(.env.local)"
+    ]
+  },
+  "enableAllProjectMcpServers": true
 }
