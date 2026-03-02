@@ -52,6 +52,7 @@ dotfiles/nvim/view
 dotfiles/nvim/pack
 dotfiles/vim/pack
 .ignore
+.claude/settings.local.json
 
 # Ignore vim user's wordlist
 dotfiles/nvim/spell/*add*

@@ -8,6 +8,15 @@
         "TRELLO_API_KEY": "bc45b5eb239ca5cb8e8b4e509413022d",
         "TRELLO_TOKEN": "{{ trello_token }}"
       }
+    },
+    "datadog": {
+      "type": "stdio",
+      "command": "bunx",
+      "args": ["@winor30/mcp-server-datadog"],
+      "env": {
+        "DATADOG_API_KEY": "{{ datadog_api_key }}",
+        "DATADOG_APP_KEY": "{{ datadog_app_key }}"
+      }
     }
   }
 }

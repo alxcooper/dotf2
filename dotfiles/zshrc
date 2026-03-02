@@ -85,7 +85,7 @@ is_wsl()  { [[ -n ${WSL_DISTRO_NAME:-} || "$(uname -r)" == *microsoft* ]]; }
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Common environment configuration
 #
-typeset -U path 
+typeset -U path
 export PATH="$HOME/bin:$PATH"
 export PATH="./bin:$PATH"
 
@@ -164,17 +164,6 @@ fi
 
 export GOPATH="$HOME/work/go"
 export PATH="$GOPATH/bin:$PATH"
-
-# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# Postgres configuration
-#
-if is_mac; then
-  # To restart postgresql@15 after an upgrade:
-  #   brew services restart postgresql@15
-  # Or, if you don't want/need a background service you can just run:
-  #   /opt/homebrew/opt/postgresql@15/bin/postgres -D /opt/homebrew/var/postgresql@15
-  export PATH="$(brew --prefix postgresql@16)/bin:$PATH"
-fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Android SDK configuration

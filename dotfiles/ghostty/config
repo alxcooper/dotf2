@@ -15,6 +15,7 @@ foreground = "#c0c0c0"
 cursor-color="#008f11"
 
 font-family = "FiraCode Nerd Font Mono Ret"
+
 font-size = 13
 adjust-underline-position = 4
 window-padding-balance = true

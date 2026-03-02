@@ -1,8 +1,4 @@
 {
-  "alwaysThinkingEnabled": true,
-  "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true
-  },
   "permissions": {
     "allow": [
       "Bash(cat:*)",
@@ -19,5 +15,11 @@
       "Read(.env.local)"
     ]
   },
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true
 }
