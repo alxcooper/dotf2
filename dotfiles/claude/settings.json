@@ -19,7 +19,10 @@
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "github@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true
+    "code-simplifier@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "ruby-lsp@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "max"
 }

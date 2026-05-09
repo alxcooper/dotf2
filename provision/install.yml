@@ -51,6 +51,7 @@
           - oven-sh/bun/bun
           # - postgresql@17
           # - redis
+          - uv
         state: present
       tags: brew
 
@@ -61,25 +62,25 @@
         scope: global
         value: '{{ user_name }}'
       tags: git
-      
+
     - name: set git user email
       git_config:
         name: user.email
         scope: global
         value: '{{ user_email }}'
       tags: git
-      
+
     - name: set global gitignore
       git_config:
         name: core.excludesfile
         scope: global
         value: ~/.gitignore_global
       tags: git
-      
+
     - name: link global gitignore
       file: src={{ dotfiles_dir }}/gitignore_global dest=~/.gitignore_global state=link
       tags: git
-      
+
     - name: set push.default simple
       git_config:
         name: push.default
@@ -99,7 +100,7 @@
       file: src={{ dotfiles_dir}}/zshrc dest=~/.zshrc state=link force=yes
       tags: zsh
 
-    # Starship configuration  
+    # Starship configuration
     - name: symlink starship config
       file: src={{ dotfiles_dir }}/starship.toml dest=~/.config/starship.toml state=link force=yes
       tags: starship
@@ -113,23 +114,23 @@
     - name: create directory for vim backups and swaps
       file: path=~/.vimtmp state=directory force=yes
       tags: vim
-      
+
     - name: symlink vim config
       file: src={{ dotfiles_dir }}/vim/vimrc.vim dest=~/.vimrc state=link force=yes
       tags: vim
-      
+
     - name: remove old vim directory
       file: path=~/.vim state=absent force=yes
       tags: vim
-      
+
     - name: symlink vim directory
       file: src={{ dotfiles_dir }}/vim dest=~/.vim state=link force=yes
       tags: vim
-      
+
     - name: create dir for minpac
       file: path={{ dotfiles_dir }}/vim/pack/minpac/opt state=directory
       tags: vim
-      
+
     - name: clone minpac
       git:
         repo: git@github.com:k-takata/minpac.git
@@ -142,7 +143,7 @@
     - name: symlink gemrc
       file: src={{ dotfiles_dir}}/gemrc dest=~/.gemrc state=link force=yes
       tags: devtools
-      
+
     - name: create GOPATH directory
       file: path=~/work/go/bin state=directory force=yes
       tags: devtools
