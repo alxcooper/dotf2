@@ -37,6 +37,7 @@
           - mise
           - pwgen
           - rg
+          - rtk
           - shared-mime-info
           - starship
           - terraform
@@ -115,6 +116,10 @@
       file: path=~/.vimtmp state=directory force=yes
       tags: vim
 
+    - name: create vim viewdir
+      file: path=~/.cache/vim/view state=directory
+      tags: vim
+
     - name: symlink vim config
       file: src={{ dotfiles_dir }}/vim/vimrc.vim dest=~/.vimrc state=link force=yes
       tags: vim
@@ -181,4 +186,10 @@
         src: "{{ dotfiles_dir }}/claude/mcp.json.j2"
         dest: ~/.mcp.json
         mode: '0600'
+      tags: claude
+
+    - name: initialize rtk for Claude Code
+      command: rtk init -g
+      args:
+        creates: ~/.claude/RTK.md
       tags: claude

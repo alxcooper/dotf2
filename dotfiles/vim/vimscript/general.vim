@@ -56,6 +56,9 @@ autocmd BufReadPost *
 
 set foldlevelstart=10
 
+" Save view files outside the repo (since ~/.vim is a symlink to dotfiles/vim)
+set viewdir=~/.cache/vim/view
+
 augroup AutoSaveFolds
   autocmd!
   autocmd BufWinLeave *.* mkview
