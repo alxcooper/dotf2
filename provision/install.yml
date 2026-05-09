@@ -35,6 +35,7 @@
           - jpegoptim
           - lazygit
           - mise
+          - neovim
           - pwgen
           - rg
           - rtk
@@ -143,6 +144,11 @@
         clone: yes
         update: yes
       tags: vim
+
+    # Neovim / LazyVim configuration
+    - name: symlink nvim config
+      file: src={{ dotfiles_dir }}/nvim dest=~/.config/nvim state=link force=yes
+      tags: nvim
 
     # Development tools configuration
     - name: symlink gemrc
