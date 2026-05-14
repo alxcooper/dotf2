@@ -13,7 +13,8 @@
     "deny": [
       "Read(**/.env.local)",
       "Read(.env.local)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
@@ -24,5 +25,5 @@
     "ruby-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "max"
+  "skipAutoPermissionPrompt": true
 }

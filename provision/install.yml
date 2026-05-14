@@ -44,6 +44,7 @@
           - terraform
           - tmux
           - tmuxp
+          - tree-sitter-cli
           - vim
           - wget
           - yazi
@@ -149,6 +150,11 @@
     - name: symlink nvim config
       file: src={{ dotfiles_dir }}/nvim dest=~/.config/nvim state=link force=yes
       tags: nvim
+
+    # Neovim / kickstart-modular configuration (used via `kvim` alias)
+    - name: symlink kvim config
+      file: src={{ dotfiles_dir }}/kvim dest=~/.config/kvim state=link force=yes
+      tags: kvim
 
     # Development tools configuration
     - name: symlink gemrc

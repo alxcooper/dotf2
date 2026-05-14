@@ -74,6 +74,7 @@ alias rs='bundle exec rails s'
 alias rc='bundle exec rails c'
 alias rdm='bundle exec rails db:migrate'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
+alias kvim='NVIM_APPNAME=kvim nvim'
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Useful functions
