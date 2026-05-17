@@ -6,5 +6,13 @@
 --   :Git blame        -- inline blame in a split (column-style)
 --   :Gdiffsplit       -- diff current file vs index/HEAD
 return {
-  { 'tpope/vim-fugitive' },
+  {
+    'tpope/vim-fugitive',
+    cmd = { 'Git', 'Gdiffsplit', 'Gvdiffsplit', 'Gedit', 'Gread', 'Gwrite' },
+    keys = {
+      { '<leader>gs', '<cmd>Git<cr>', desc = 'Git status' },
+      { '<leader>gb', '<cmd>Git blame<cr>', desc = 'Git blame' },
+      { '<leader>gp', '<cmd>Git push<cr>', desc = 'Git push' },
+    },
+  },
 }

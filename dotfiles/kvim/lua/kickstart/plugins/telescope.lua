@@ -65,11 +65,15 @@ return {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          sorting_strategy = 'ascending',
+          layout_config = {
+            prompt_position = 'top',
+          },
+          preview = {
+            filesize_limit = 1,
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = { require('telescope.themes').get_dropdown() },
@@ -82,9 +86,85 @@ return {
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
+      local file_excludes = {
+        '.git',
+        '.bundle',
+        '.cache',
+        '.parcel-cache',
+        '.terraform',
+        '.turbo',
+        '.yardoc',
+        'bin/dist',
+        'build',
+        'coverage',
+        'dist',
+        'log',
+        'node_modules',
+        'public/assets',
+        'public/packs*',
+        'public/vite*',
+        'storage',
+        'tmp',
+        'vendor',
+        '*.avif',
+        '*.bmp',
+        '*.bz2',
+        '*.db',
+        '*.dump',
+        '*.eot',
+        '*.gif',
+        '*.gz',
+        '*.ico',
+        '*.jar',
+        '*.jpeg',
+        '*.jpg',
+        '*.mov',
+        '*.mp3',
+        '*.mp4',
+        '*.otf',
+        '*.pdf',
+        '*.png',
+        '*.rar',
+        '*.sqlite3',
+        '*.svg',
+        '*.tar',
+        '*.tgz',
+        '*.ttf',
+        '*.wav',
+        '*.webp',
+        '*.webm',
+        '*.woff',
+        '*.woff2',
+        '*.xz',
+        '*.zip',
+      }
+      local function fd_find_command(extra_args)
+        local command = { 'fd', '--type', 'f', '--hidden' }
+        vim.list_extend(command, extra_args or {})
+
+        for _, exclude in ipairs(file_excludes) do
+          vim.list_extend(command, { '--exclude', exclude })
+        end
+
+        return command
+      end
+      local function project_files() builtin.find_files { find_command = fd_find_command() } end
+      local function all_files()
+        builtin.find_files {
+          hidden = true,
+          no_ignore = true,
+          find_command = fd_find_command {
+            '--no-ignore',
+          },
+        }
+      end
+      local function buffers() builtin.buffers() end
+
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', project_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sF', all_files, { desc = '[S]earch [F]iles (all)' })
+      vim.keymap.set('n', ',,', project_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -92,7 +172,8 @@ return {
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader><leader>', buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', ',.', buffers, { desc = '[ ] Find existing buffers' })
 
       -- This runs on LSP attach per buffer (see main LSP attach function in 'neovim/nvim-lspconfig' config for more info,
       -- it is better explained there). This allows easily switching between pickers if you prefer using something else!
