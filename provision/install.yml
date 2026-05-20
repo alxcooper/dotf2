@@ -30,6 +30,7 @@
           - golangci-lint
           - gpg
           - helix
+          - helm
           - htop
           - imagemagick
           - jpegoptim
