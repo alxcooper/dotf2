@@ -13,6 +13,9 @@ read_only = "🔒"
 [aws]
 disabled = true
 
+[package]
+disabled = true
+
 [custom.dockerctx]
 command = "docker context show 2>/dev/null | grep -v '^default$'"
 when = "docker context show 2>/dev/null | grep -qv '^default$'"
