@@ -17,7 +17,9 @@ return {
           local api = require 'nvim-tree.api'
           local current_buf = vim.api.nvim_buf_get_name(0)
           local is_tree = vim.bo.filetype == 'NvimTree'
-          if current_buf == '' or is_tree then
+          local is_starter = vim.bo.filetype == 'ministarter'
+          local is_special = current_buf == '' or is_tree or is_starter or vim.bo.buftype ~= ''
+          if is_special then
             api.tree.toggle()
           else
             api.tree.find_file { open = true, focus = true }
@@ -46,7 +48,7 @@ return {
         map('?', api.tree.toggle_help, 'Help')
       end,
       filters = {
-        dotfiles = true, -- NERDTreeShowHidden = 1
+        dotfiles = false, -- NERDTreeShowHidden = 1
         custom = {
           '^\\.git$',
           '^node_modules$',
