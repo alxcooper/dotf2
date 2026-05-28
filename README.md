@@ -38,7 +38,7 @@ make install tags=brew      # Install/update homebrew packages only
 make install tags=git       # Configure git only
 ```
 
-Available tags: `brew`, `git`, `zsh`, `vim`, `nvim`, `kvim`, `tmux`, `helix`, `ghostty`, `starship`, `devtools`, `claude`.
+Available tags: `brew`, `git`, `zsh`, `vim`, `nvim`, `kvim`, `lvim`, `tmux`, `helix`, `ghostty`, `starship`, `devtools`, `claude`.
 
 ## Claude Code / RTK
 

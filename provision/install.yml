@@ -147,15 +147,20 @@
         update: yes
       tags: vim
 
-    # Neovim / LazyVim configuration
+    # Neovim / kickstart-modular configuration (default nvim editor)
     - name: symlink nvim config
-      file: src={{ dotfiles_dir }}/nvim dest=~/.config/nvim state=link force=yes
+      file: src={{ dotfiles_dir }}/kvim dest=~/.config/nvim state=link force=yes
       tags: nvim
 
-    # Neovim / kickstart-modular configuration (used via `kvim` alias)
+    # Neovim / kickstart-modular configuration (compatibility app name)
     - name: symlink kvim config
       file: src={{ dotfiles_dir }}/kvim dest=~/.config/kvim state=link force=yes
       tags: kvim
+
+    # Neovim / LazyVim configuration (used via `lvim` alias)
+    - name: symlink lvim config
+      file: src={{ dotfiles_dir }}/nvim dest=~/.config/lvim state=link force=yes
+      tags: lvim
 
     # Development tools configuration
     - name: symlink gemrc

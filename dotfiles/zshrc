@@ -74,7 +74,7 @@ alias rs='bundle exec rails s'
 alias rc='bundle exec rails c'
 alias rdm='bundle exec rails db:migrate'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-alias kvim='NVIM_APPNAME=kvim nvim'
+alias lvim='NVIM_APPNAME=lvim nvim'
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Useful functions
@@ -106,6 +106,7 @@ fi
 export DISABLE_AUTO_TITLE='true'
 
 if [ -x "$(command -v nvim)" ]; then
+  alias vim='nvim'
   export EDITOR='nvim'
 elif [ -x "$(command -v hx)" ]; then
   export EDITOR='hx'
@@ -116,6 +117,7 @@ elif [ -x "$(command -v vimx)" ]; then
 else
   export EDITOR='vim'
 fi
+export VISUAL="$EDITOR"
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Prompt configuration
