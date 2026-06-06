@@ -1,51 +1,81 @@
-# Start timing
-_zsh_start_time=$(($(date +%s%N)/1000000))
+# Startup profiling. Run with ZSHRC_PROFILE=1 to print load time.
+zmodload zsh/datetime 2>/dev/null
+_zsh_start_time=${EPOCHREALTIME:-}
 
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
-[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-source "${ZINIT_HOME}/zinit.zsh"
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# Useful functions
+#
+is_mac()  { [[ $OSTYPE == darwin*  ]]; }
+is_linux(){ [[ $OSTYPE == linux*   ]]; }
+is_wsl()  { [[ -n ${WSL_DISTRO_NAME:-} || "$(uname -r 2>/dev/null)" == *microsoft* ]]; }
 
-zi ice wait lucid
-zi light MichaelAquilina/zsh-you-should-use
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# Common environment configuration
+#
+typeset -U path PATH
+path=(
+  "$HOME/.local/bin"
+  "$HOME/bin"
+  "./bin"
+  "./node_modules/.bin"
+  $path
+)
 
-zi ice wait lucid atload"_zsh_autosuggest_start"
-zi light zsh-users/zsh-autosuggestions
+export ANSIBLE_NOCOWS=1
+export HOMEBREW_NO_AUTO_UPDATE=true
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 
-zi ice wait lucid blockf atpull'zi creinstall -q .'
-zi light zsh-users/zsh-completions
-
-zi ice wait lucid
-zi light Aloxaf/fzf-tab
-
-autoload -Uz compinit
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
+if is_mac; then
+  export CLICOLOR=1
+  # If you'd like to mimic the colors of a typical Linux terminal
+  # https://www.cyberciti.biz/faq/apple-mac-osx-terminal-color-ls-output-option/
+  export LSCOLORS=exgxBxDxcxEgEdxbxgxcxd
 fi
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#595959"
-bindkey '^j' autosuggest-accept
+# Fix tmuxinator/tmuxp window titles.
+export DISABLE_AUTO_TITLE='true'
+
+if (( ${+commands[nvim]} )); then
+  alias vim='nvim'
+  export EDITOR='nvim'
+elif (( ${+commands[vimx]} )); then
+  # Use vimx if exists because it often has clipboard support.
+  alias vim='vimx'
+  export EDITOR='vimx'
+else
+  export EDITOR='vim'
+fi
+export VISUAL="$EDITOR"
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # History
 #
+HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
 HISTSIZE=50000
 SAVEHIST=50000
+ZSH_HISTORY_MAX_ENTRY_LENGTH="${ZSH_HISTORY_MAX_ENTRY_LENGTH:-1000}"
 setopt EXTENDED_HISTORY          # Save timestamp
 setopt APPEND_HISTORY
 setopt INC_APPEND_HISTORY        # Add commands immediately
 setopt SHARE_HISTORY             # Share history between sessions
+setopt HIST_FCNTL_LOCK
 setopt HIST_EXPIRE_DUPS_FIRST    # Remove duplicates first
 setopt HIST_IGNORE_DUPS          # Don't record duplicate in a row
 setopt HIST_FIND_NO_DUPS         # Don't show duplicates in search
+setopt HIST_SAVE_NO_DUPS         # Don't write duplicates to history file
 setopt HIST_REDUCE_BLANKS        # Remove extra blanks
 setopt HIST_IGNORE_SPACE         # Manual control with leading space
 
 zshaddhistory() {
-  # Don't save multiline commands (when each line end with ' \')
-  [[ $1 == *$' \\'* ]] && return 1
+  local line="${1%$'\n'}"
+  local max_length="${ZSH_HISTORY_MAX_ENTRY_LENGTH:-1000}"
+
+  # Keep pasted blobs and generated snippets out of history/fzf/autosuggestions.
+  [[ $line == *$'\n'* ]] && return 1
+  [[ $line == *$' \\'* ]] && return 1
+  (( ${#line} > max_length )) && return 1
+
   return 0
 }
 
@@ -77,85 +107,100 @@ alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 alias lvim='NVIM_APPNAME=lvim nvim'
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# Useful functions
+# Zinit and completion
 #
-is_mac()  { [[ $OSTYPE == darwin*  ]]; }
-is_linux(){ [[ $OSTYPE == linux*   ]]; }
-is_wsl()  { [[ -n ${WSL_DISTRO_NAME:-} || "$(uname -r)" == *microsoft* ]]; }
-
-# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# Common environment configuration
-#
-typeset -U path
-export PATH="$HOME/bin:$PATH"
-export PATH="./bin:$PATH"
-
-export ANSIBLE_NOCOWS=1
-export HOMEBREW_NO_AUTO_UPDATE=true
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
-
-if is_mac; then
-  export CLICOLOR=1
-  # If you'd like to mimic the colors of a typical Linux terminal
-  # https://www.cyberciti.biz/faq/apple-mac-osx-terminal-color-ls-output-option/
-  export LSCOLORS=exgxBxDxcxEgEdxbxgxcxd
-fi
-
-# Fix tmuxinator/tmuxp window titles.
-export DISABLE_AUTO_TITLE='true'
-
-if [ -x "$(command -v nvim)" ]; then
-  alias vim='nvim'
-  export EDITOR='nvim'
-elif [ -x "$(command -v hx)" ]; then
-  export EDITOR='hx'
-elif [ -x "$(command -v vimx)" ]; then
-  # Use vimx if exists (because clipboard support)
-  alias vim='vimx'
-  export EDITOR='vimx'
+ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+if [[ -r "$ZINIT_HOME/zinit.zsh" ]]; then
+  source "$ZINIT_HOME/zinit.zsh"
 else
-  export EDITOR='vim'
+  print -u2 "zinit not found at $ZINIT_HOME; run: make install tags=zsh"
 fi
-export VISUAL="$EDITOR"
 
-# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# Prompt configuration
-#
-export STARSHIP_CONFIG=~/dotf2/dotfiles/starship.toml
-eval "$(starship init zsh)"
+if (( ${+functions[zinit]} )); then
+  zinit light zsh-users/zsh-completions
+fi
 
-# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# z is a smarter cd command
-#
-eval "$(zoxide init zsh)"
+zstyle ':completion:*' use-cache yes
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache"
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' menu no
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*'
+zstyle ':completion:*:descriptions' format '[%d]'
+[[ -n ${LS_COLORS:-} ]] && zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+autoload -Uz compinit
+_zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+[[ -d "$_zsh_cache_dir" ]] || mkdir -p "$_zsh_cache_dir"
+_zcompdump="$_zsh_cache_dir/zcompdump-${ZSH_VERSION}"
+_compinit_args=(-d "$_zcompdump")
+
+if [[ -f "$_zcompdump" ]]; then
+  zmodload zsh/stat 2>/dev/null
+  typeset -A _zcompdump_stat
+  if zstat -H _zcompdump_stat "$_zcompdump" 2>/dev/null &&
+      (( EPOCHSECONDS - _zcompdump_stat[mtime] < 86400 )); then
+    _compinit_args=(-C -d "$_zcompdump")
+  fi
+fi
+
+compinit "${_compinit_args[@]}"
+unset _zsh_cache_dir _zcompdump _compinit_args _zcompdump_stat
+
+if (( ${+functions[zinit]} )); then
+  zstyle ':fzf-tab:*' switch-group '<' '>'
+  zinit light Aloxaf/fzf-tab
+
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#595959"
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  zinit light zsh-users/zsh-autosuggestions
+  bindkey '^j' autosuggest-accept
+  bindkey '^f' autosuggest-accept
+fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # FZF for searching in the shell history
 #
-if is_mac; then
-  [ -s "$(brew --prefix fzf)/shell/key-bindings.zsh" ] && \. "$(brew --prefix fzf)/shell/key-bindings.zsh"
-else
-  [ -s "/usr/share/fzf/shell/key-bindings.zsh" ] && \. /usr/share/fzf/shell/key-bindings.zsh
-fi
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git 2>/dev/null || rg --files'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git 2>/dev/null'
 
-export FZF_DEFAULT_COMMAND='rg --files'
+if (( ${+commands[fzf]} )) && [[ -o interactive && -t 0 && -t 1 ]]; then
+  if is_mac; then
+    _fzf_key_bindings=(
+      /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+      /usr/local/opt/fzf/shell/key-bindings.zsh
+    )
+  else
+    _fzf_key_bindings=(/usr/share/fzf/shell/key-bindings.zsh)
+  fi
+
+  for _fzf_key_bindings_file in $_fzf_key_bindings; do
+    if [[ -r "$_fzf_key_bindings_file" ]]; then
+      source "$_fzf_key_bindings_file"
+      break
+    fi
+  done
+  unset _fzf_key_bindings _fzf_key_bindings_file
+fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Ruby and Rails environment
 #
-eval "$(/Users/alexv/.local/bin/mise activate zsh)"
+if (( ${+commands[mise]} )); then
+  eval "$(mise activate zsh)"
+fi
 
 export BUNDLE_JOBS=4
 export DISABLE_SPRING=1
 export SKIP_SIMPLECOV=1
 
 if is_mac; then
-  export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib:/opt/homebrew/lib/
-  export CPATH=$CPATH:/usr/local/include:/opt/homebrew/include/
+  export LIBRARY_PATH="${LIBRARY_PATH:+$LIBRARY_PATH:}/usr/local/lib:/opt/homebrew/lib"
+  export CPATH="${CPATH:+$CPATH:}/usr/local/include:/opt/homebrew/include"
 fi
 
-export PATH="./node_modules/.bin:$PATH"
 # Fix node on Apple Silicon processors
 # https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported
 # export NODE_OPTIONS=--openssl-legacy-provider
@@ -164,29 +209,35 @@ export PATH="./node_modules/.bin:$PATH"
 # Go environment
 #
 if is_linux; then
-  export PATH="$HOME/opt/go/bin:$PATH"
+  path=("$HOME/opt/go/bin" $path)
 fi
 
-export GOPATH="$HOME/work/go"
-export PATH="$GOPATH/bin:$PATH"
+export GOPATH="${GOPATH:-$HOME/work/go}"
+path=("$GOPATH/bin" $path)
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Android SDK configuration
 #
-export JAVA_HOME="/opt/homebrew/opt/openjdk/"
-export PATH="$JAVA_HOME/bin:$PATH"
+if is_mac; then
+  export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk}"
+  export JAVA_HOME="${JAVA_HOME%/}"
+  path=("$JAVA_HOME/bin" $path)
 
-export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-export ANDROID_HOME="$HOME/Library/Android/sdk" #(Deprecated, but some programs still using it to locate SDK)
-export PATH="$ANDROID_HOME/cmdline-tools/latest/bin/:$PATH"
-export PATH="$ANDROID_HOME/emulator/:$PATH"
-export PATH="$ANDROID_HOME/platform-tools/:$PATH"
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}"
+  export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}" # Deprecated, but some programs still use it.
+  path=(
+    "$ANDROID_HOME/cmdline-tools/latest/bin"
+    "$ANDROID_HOME/emulator"
+    "$ANDROID_HOME/platform-tools"
+    "$ANDROID_HOME/tools"
+    $path
+  )
+fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # AWS session manager
 #
-export PATH="$PATH:/usr/local/sessionmanagerplugin/bin"
+[[ -d /usr/local/sessionmanagerplugin/bin ]] && path=("/usr/local/sessionmanagerplugin/bin" $path)
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Rust and Cargo
@@ -194,18 +245,43 @@ export PATH="$PATH:/usr/local/sessionmanagerplugin/bin"
 # Installation instructions:
 # https://doc.rust-lang.org/cargo/getting-started/installation.html
 #
-if [ -f "$HOME/.cargo/env" ]; then
+if [[ -r "$HOME/.cargo/env" ]]; then
   source "$HOME/.cargo/env"
+fi
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# Prompt configuration
+#
+export STARSHIP_CONFIG="${STARSHIP_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml}"
+if (( ${+commands[starship]} )); then
+  eval "$(starship init zsh)"
 fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Load secrets which must be gitignored
 #
-if [ -f ~/.zshrc.secrets ]; then
-  source ~/.zshrc.secrets
+if [[ -r "$HOME/.zshrc.secrets" ]]; then
+  source "$HOME/.zshrc.secrets"
 fi
 
-# Calculate and show load time or run `time zsh -i -c exit`
-_zsh_end_time=$(($(date +%s%N)/1000000))
-_zsh_load_time=$(($_zsh_end_time - $_zsh_start_time))
-echo "zshrc loaded in ${_zsh_load_time}ms"
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# z is a smarter cd command
+#
+if (( ${+commands[zoxide]} )); then
+  eval "$(zoxide init zsh)"
+fi
+
+if (( ${+functions[zinit]} )); then
+  zinit light MichaelAquilina/zsh-you-should-use
+  typeset -gA ZSH_HIGHLIGHT_STYLES
+  ZSH_HIGHLIGHT_STYLES[path]=none
+  ZSH_HIGHLIGHT_STYLES[path_prefix]=none
+  ZSH_HIGHLIGHT_STYLES[path_pathseparator]=none
+  ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=none
+  zinit light zsh-users/zsh-syntax-highlighting
+fi
+
+if [[ ${ZSHRC_PROFILE:-0} == 1 && -n "$_zsh_start_time" && -n "${EPOCHREALTIME:-}" ]]; then
+  printf 'zshrc loaded in %.0fms\n' $(( (EPOCHREALTIME - _zsh_start_time) * 1000 ))
+fi
+unset _zsh_start_time

@@ -17,6 +17,5 @@ disabled = true
 disabled = true
 
 [custom.dockerctx]
-command = "docker context show 2>/dev/null | grep -v '^default$'"
-when = "docker context show 2>/dev/null | grep -qv '^default$'"
+command = "ctx=$(docker context show 2>/dev/null) && [ \"$ctx\" != default ] && printf %s \"$ctx\""
 format = "via 🐳 [$output](bold cyan) "

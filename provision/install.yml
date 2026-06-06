@@ -93,10 +93,16 @@
       tags: git
 
     # Zsh configuration
-    - name: clone zgen
+    - name: create zinit directory
+      file:
+        path: ~/.local/share/zinit
+        state: directory
+      tags: zsh
+
+    - name: clone zinit
       git:
-        repo: https://github.com/tarjoilija/zgen.git
-        dest: ~/.zgen
+        repo: https://github.com/zdharma-continuum/zinit.git
+        dest: ~/.local/share/zinit/zinit.git
         update: yes
       tags: zsh
 

@@ -1,33 +1,25 @@
-# This is the configuration file for Ghostty.
-#
-# Run `ghostty +show-config --default --docs` to view a list of
-# all available config options and their default values.
-#
-# Additionally, each config option is also explained in detail
-# on Ghostty's website, at https://ghostty.org/docs/config.
+# Run `ghostty +show-config --default --docs` to inspect available options.
 
-theme = "Iterm2 Tango Dark"
-# theme = "Andromeda"
+theme = "iTerm2 Tango Dark"
 background-opacity = 0.9
 background-blur = true
 background = "#0e100a"
 foreground = "#c0c0c0"
-cursor-color="#008f11"
+cursor-color = "#008f11"
 
-font-family = "FiraCode Nerd Font Mono Ret"
-
+font-family = "FiraCode Nerd Font Mono"
+font-style = "Retina"
 font-size = 13
 adjust-underline-position = 4
+
+window-padding-x = 2
+window-padding-y = 2
 window-padding-balance = true
 
-# macos-icon = "retro"
 macos-option-as-alt = left
-
-# Mouse settings
+mouse-hide-while-typing = true
 copy-on-select = clipboard
 
-# Extra keybindings
-keybind = shift+cmd+up=jump_to_prompt:-1
 keybind = shift+enter=text:\x1b\r
 
 shell-integration = zsh
