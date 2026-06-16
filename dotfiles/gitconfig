@@ -1,0 +1,18 @@
+[core]
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  navigate = true
+  line-numbers = true
+  hunk-header-style = line-number syntax
+  hunk-header-decoration-style = omit
+  syntax-theme = kanagawa
+
+[merge]
+  conflictstyle = zdiff3
+
+[diff]
+  colorMoved = default

@@ -18,14 +18,18 @@
           - ag
           - ansible
           - awscli
+          - bat
           - cowsay
           - curl
+          - direnv
           - dive
+          - eza
           - fd
           - fnm
           - fortune
           - fzf
           - git
+          - git-delta
           - go
           - golangci-lint
           - gpg
@@ -78,11 +82,7 @@
       git_config:
         name: core.excludesfile
         scope: global
-        value: ~/.gitignore_global
-      tags: git
-
-    - name: link global gitignore
-      file: src={{ dotfiles_dir }}/gitignore_global dest=~/.gitignore_global state=link
+        value: "{{ dotfiles_dir }}/gitignore_global"
       tags: git
 
     - name: set push.default simple
@@ -90,6 +90,13 @@
         name: push.default
         scope: global
         value: simple
+      tags: git
+
+    - name: include dotfiles git config
+      git_config:
+        name: include.path
+        scope: global
+        value: "{{ dotfiles_dir }}/gitconfig"
       tags: git
 
     # Zsh configuration
@@ -114,6 +121,16 @@
     - name: symlink starship config
       file: src={{ dotfiles_dir }}/starship.toml dest=~/.config/starship.toml state=link force=yes
       tags: starship
+
+    # Bat configuration
+    - name: symlink bat config
+      file: src={{ dotfiles_dir }}/bat dest=~/.config/bat state=link force=yes
+      tags: bat
+
+    - name: rebuild bat theme cache
+      command: bat cache --build
+      changed_when: false
+      tags: bat
 
     # Tmux configuration
     - name: symlink tmux config

@@ -80,6 +80,29 @@ zshaddhistory() {
 }
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# CLI tool defaults
+#
+if (( ${+commands[eza]} )) && [[ -z ${EZA_COLORS:-} ]]; then
+  _eza_colors=(
+    reset
+    di=34 ln=36 or=31 ex=32
+    ur=0 uw=0 ux=0 ue=0
+    gr=0 gw=0 gx=0
+    tr=0 tw=0 tx=0
+    su=31 sf=31 xa='2;90'
+    sn=0 sb=0
+    uu=0 un=0 uR=31
+    gu=0 gR=31 gn=0
+    da=0 hd='4;37'
+    ga=32 gm=33 gd=31 gv=35 gt=33 gi='2;90' gc=31
+    xx='2;90'
+    bu=33 sc=0 cr=31 do=0 co=35 tm='2;90'
+  )
+  export EZA_COLORS="${(j.:.)_eza_colors}"
+  unset _eza_colors
+fi
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Aliases
 #
 alias hrl='fc -RI' # history reload
@@ -88,7 +111,6 @@ alias ta='tmux attach -t'
 alias tnew='tmux new -s'
 alias tls='tmux ls'
 alias tkill='tmux kill-session -t'
-alias ll='ls -lah'
 alias gco='git checkout'
 alias gb='git branch'
 alias gba='git branch -a'
@@ -105,6 +127,23 @@ alias rc='bundle exec rails c'
 alias rdm='bundle exec rails db:migrate'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 alias lvim='NVIM_APPNAME=lvim nvim'
+
+if (( ${+commands[eza]} )); then
+  alias l='eza --icons=never --group-directories-first'
+  alias ll='eza -la --icons=never --group-directories-first --no-user --time-style=long-iso'
+  alias la='eza -la --icons=never --group-directories-first --time-style=long-iso'
+  alias lg='eza -la --git --icons=never --group-directories-first --no-user --time-style=long-iso'
+  alias lt='eza -a --tree --level=2 --icons=never --group-directories-first --ignore-glob ".git|node_modules|vendor/bundle|.DS_Store"'
+  alias llt='eza -la --git --tree --level=2 --icons=never --group-directories-first --no-user --time-style=long-iso --ignore-glob ".git|node_modules|vendor/bundle|.DS_Store"'
+else
+  alias ll='ls -lah'
+  alias la='ls -lah'
+fi
+
+if (( ${+commands[bat]} )); then
+  alias b='bat'
+  alias bp='bat --style=plain'
+fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # Zinit and completion
@@ -160,11 +199,23 @@ if (( ${+functions[zinit]} )); then
 fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# FZF for searching in the shell history
+# FZF integration
 #
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git 2>/dev/null || rg --files'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git 2>/dev/null'
+
+ff() {
+  (( ${+commands[fzf]} )) || return 1
+
+  local file
+  file=$(fd --type f --hidden --follow --exclude .git 2>/dev/null |
+    fzf \
+      --color='preview-bg:#1f1f28,preview-fg:#dcd7ba,preview-border:#54546d' \
+      --preview 'bat --style=numbers --color=always --line-range :200 {} 2>/dev/null || sed -n "1,200p" {}') || return
+
+  ${EDITOR:-vim} "$file"
+}
 
 if (( ${+commands[fzf]} )) && [[ -o interactive && -t 0 && -t 1 ]]; then
   if is_mac; then
@@ -265,10 +316,14 @@ if [[ -r "$HOME/.zshrc.secrets" ]]; then
 fi
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-# z is a smarter cd command
+# Directory navigation and per-project environment
 #
 if (( ${+commands[zoxide]} )); then
   eval "$(zoxide init zsh)"
+fi
+
+if (( ${+commands[direnv]} )); then
+  eval "$(direnv hook zsh)"
 fi
 
 if (( ${+functions[zinit]} )); then
