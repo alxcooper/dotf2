@@ -57,6 +57,34 @@ return {
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        ['<Tab>'] = {
+          function(cmp)
+            if cmp.is_menu_visible() then return cmp.select_next() end
+            if cmp.snippet_active { direction = 1 } then return cmp.snippet_forward() end
+
+            local col = vim.api.nvim_win_get_cursor(0)[2]
+            if col == 0 then return end
+
+            local line = vim.api.nvim_get_current_line()
+            if line:sub(col, col):match '%s' then return end
+
+            return cmp.show()
+          end,
+          'fallback',
+        },
+        ['<S-Tab>'] = {
+          function(cmp)
+            if cmp.is_menu_visible() then return cmp.select_prev() end
+            if cmp.snippet_active { direction = -1 } then return cmp.snippet_backward() end
+          end,
+          'fallback',
+        },
+        ['<CR>'] = {
+          function(cmp)
+            if cmp.is_menu_visible() then return cmp.select_and_accept() end
+          end,
+          'fallback',
+        },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -69,13 +97,14 @@ return {
       },
 
       completion = {
+        menu = { auto_show = false },
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
       },
 
       snippets = { preset = 'luasnip' },

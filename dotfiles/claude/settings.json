@@ -25,6 +25,7 @@
     "ruby-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
-  "skipAutoPermissionPrompt": true
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true,
+  "tui": "fullscreen"
 }

@@ -49,6 +49,10 @@ return {
       end,
       filters = {
         dotfiles = false, -- NERDTreeShowHidden = 1
+        git_ignored = true,
+        exclude = {
+          '%.env%.local$',
+        },
         custom = {
           '^\\.git$',
           '^node_modules$',
