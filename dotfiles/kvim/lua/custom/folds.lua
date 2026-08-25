@@ -30,7 +30,7 @@ local function setup_view_autocmds()
     callback = function(args)
       if not is_real_file_buffer(args.buf) then return end
 
-      vim.cmd 'silent! mkview'
+      vim.cmd 'silent! mkview!'
     end,
   })
   vim.api.nvim_create_autocmd('BufWinEnter', {

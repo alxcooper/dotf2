@@ -14,7 +14,7 @@ return {
         statementStyle = { bold = true },
         theme = 'wave',
       }
-      vim.cmd.colorscheme 'kanagawa-wave'
+      -- vim.cmd.colorscheme 'kanagawa-wave' -- left installed; Nightfox is the default
       -- vim.cmd.colorscheme 'kanagawa-dragon'
     end,
   },
