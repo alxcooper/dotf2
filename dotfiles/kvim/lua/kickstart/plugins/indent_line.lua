@@ -10,9 +10,9 @@ return {
   ---@module 'ibl'
   ---@type ibl.config
   opts = {
-    indent = { char = '▏' },
+    indent = { char = '┊' },
     scope = {
-      char = '▏',
+      char = '┊',
       show_start = false,
       show_end = false,
     },

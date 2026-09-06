@@ -4,7 +4,6 @@ return {
     'lukas-reineke/virt-column.nvim',
     lazy = false,
     config = function(_, opts)
-      vim.api.nvim_set_hl(0, 'VirtColumnMuted', { fg = '#424254' })
       local virt_column = require 'virt-column'
 
       virt_column.setup(opts)

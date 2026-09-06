@@ -225,9 +225,21 @@ return {
         return content
       end
 
-      -- Make recent-file paths use Comment color without inheriting italic.
+      -- Keep decorative starter elements subdued and consistent with the theme.
       local set_starter_highlights = function()
         local comment = vim.api.nvim_get_hl(0, { name = 'Comment', link = false })
+        local special = vim.api.nvim_get_hl(0, { name = 'Special', link = false })
+        vim.api.nvim_set_hl(0, 'MiniStarterHeader', {
+          fg = special.fg,
+          ctermfg = special.ctermfg,
+          bold = false,
+        })
+        vim.api.nvim_set_hl(0, 'MiniStarterFooter', {
+          fg = comment.fg,
+          ctermfg = comment.ctermfg,
+          bold = false,
+          italic = false,
+        })
         vim.api.nvim_set_hl(0, 'MiniStarterRecentPath', {
           fg = comment.fg,
           ctermfg = comment.ctermfg,

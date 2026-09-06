@@ -103,7 +103,12 @@ require 'keymaps'
 require 'lazy-bootstrap'
 
 -- [[ Configure and install plugins ]]
+-- Register highlights before plugins so their ColorScheme callbacks see the overrides.
+require('custom.highlights').setup()
 require 'lazy-plugins'
+
+-- Default colorscheme (built into Neovim).
+vim.cmd.colorscheme 'habamax'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
