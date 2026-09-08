@@ -1,0 +1,20 @@
+# Some snippets copy from https://github.com/honza/vim-snippets/blob/master/snippets/ruby.snippets
+snippet bp
+	binding.pry
+snippet frozen
+	# frozen_string_literal: true
+snippet def
+	def ${1:method_name}
+		${0}
+	end
+snippet defi
+	def initialize(${1:args})
+		${0}
+	end
+snippet r
+	attr_reader :${0:attr_names}
+snippet w
+	attr_writer :${0:attr_names}
+snippet rw
+	attr_accessor :${0:attr_names}
+# EOF

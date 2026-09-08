@@ -24,6 +24,10 @@ return {
       { 'j-hui/fidget.nvim', opts = {} },
     },
     config = function()
+      -- Request definitions asynchronously instead of falling back to a tags file.
+      -- The built-in LSP jump records the origin for the standard <C-t> return.
+      vim.keymap.set('n', '<C-]>', vim.lsp.buf.definition, { desc = 'Go to definition (LSP)' })
+
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -65,6 +69,13 @@ return {
             mode = mode or 'n'
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
+
+          map('grr', function() require('fzf-lua').lsp_references() end, '[G]oto [R]eferences')
+          map('gri', function() require('fzf-lua').lsp_implementations() end, '[G]oto [I]mplementation')
+          map('grd', function() require('fzf-lua').lsp_definitions() end, '[G]oto [D]efinition')
+          map('gO', function() require('fzf-lua').lsp_document_symbols() end, 'Open Document Symbols')
+          map('gW', function() require('fzf-lua').lsp_live_workspace_symbols() end, 'Open Workspace Symbols')
+          map('grt', function() require('fzf-lua').lsp_typedefs() end, '[G]oto [T]ype Definition')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -122,6 +133,13 @@ return {
       --  See `:help lsp-config` for information about keys and how to configure
       ---@type table<string, vim.lsp.Config>
       local servers = {
+        ruby_lsp = {
+          -- Ruby LSP and its native gems must run with the project's Ruby.
+          cmd = function(dispatchers, config)
+            local cmd = vim.fn.executable 'mise' == 1 and { vim.fn.exepath 'mise', 'exec', '--', 'ruby-lsp' } or { 'ruby-lsp' }
+            return vim.lsp.rpc.start(cmd, dispatchers, { cwd = config.cmd_cwd or config.root_dir })
+          end,
+        },
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
@@ -173,7 +191,8 @@ return {
       --    :Mason
       --
       -- You can press `g?` for help in this menu.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      -- Ruby LSP is installed per Ruby via gem/mise, not in Mason's shared gem directory.
+      local ensure_installed = vim.tbl_filter(function(name) return name ~= 'ruby_lsp' end, vim.tbl_keys(servers))
       vim.list_extend(ensure_installed, {
         -- You can add other tools here that you want Mason to install
       })

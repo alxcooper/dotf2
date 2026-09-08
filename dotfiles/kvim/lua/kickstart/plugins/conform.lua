@@ -5,6 +5,13 @@ return {
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
+    init = function()
+      vim.api.nvim_create_user_command('PrettifyJSON', function()
+        require('conform').format({ formatters = { 'jq' }, lsp_format = 'never', async = false, timeout_ms = 3000 }, function(err)
+          if err then vim.notify('PrettifyJSON: ' .. err, vim.log.levels.ERROR) end
+        end)
+      end, { desc = 'Format JSON with jq' })
+    end,
     keys = {
       {
         '<leader>f',
@@ -34,6 +41,7 @@ return {
       },
       -- You can also specify external formatters in here.
       formatters_by_ft = {
+        json = { 'jq' },
         -- rust = { 'rustfmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },

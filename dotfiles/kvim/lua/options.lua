@@ -75,4 +75,7 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- Save modified files when switching buffers and on commands that allow autowrite.
+vim.o.autowriteall = true
+
 -- vim: ts=2 sts=2 sw=2 et

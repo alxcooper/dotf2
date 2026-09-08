@@ -92,7 +92,7 @@ return {
         return root
       end
 
-      -- Change local cwd to the file's git root so Telescope/grep start from the project.
+      -- Change local cwd to the file's git root so file search/grep start from the project.
       local change_to_git_root = function(path)
         local root = find_git_root(path)
         if root ~= nil then vim.cmd.lcd(vim.fn.fnameescape(root)) end
@@ -157,9 +157,7 @@ return {
             end
           end
 
-          if #files == 0 then
-            return { { name = 'There are no recent files', action = '', section = section } }
-          end
+          if #files == 0 then return { { name = 'There are no recent files', action = '', section = section } } end
 
           local items = {}
           for _, path in ipairs(files) do
@@ -259,10 +257,10 @@ return {
         items = {
           recent_files_section(8, true, 'LRU within this dir:'),
           recent_files_section(8, false, 'LRU:'),
-          { name = 'Find files', action = 'Telescope find_files', section = 'Telescope' },
-          { name = 'Live grep', action = 'Telescope live_grep', section = 'Telescope' },
-          { name = 'Recent files', action = 'Telescope oldfiles', section = 'Telescope' },
-          { name = 'Help tags', action = 'Telescope help_tags', section = 'Telescope' },
+          { name = 'Find files', action = 'FzfLua files', section = 'Search' },
+          { name = 'Live grep', action = 'FzfLua live_grep', section = 'Search' },
+          { name = 'Recent files', action = 'FzfLua oldfiles', section = 'Search' },
+          { name = 'Help tags', action = 'FzfLua helptags', section = 'Search' },
           starter.sections.builtin_actions(),
         },
         content_hooks = {

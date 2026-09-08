@@ -29,6 +29,10 @@ return {
           -- },
         },
         opts = {},
+        config = function(_, opts)
+          require('luasnip').config.setup(opts)
+          require('luasnip.loaders.from_snipmate').lazy_load { paths = vim.fn.stdpath 'config' .. '/snippets' }
+        end,
       },
     },
     ---@module 'blink.cmp'

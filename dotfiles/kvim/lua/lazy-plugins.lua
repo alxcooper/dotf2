@@ -18,7 +18,6 @@ require('lazy').setup({
 
   require 'kickstart.plugins.gitsigns',
   require 'kickstart.plugins.which-key',
-  require 'kickstart.plugins.telescope',
   require 'kickstart.plugins.lspconfig',
   require 'kickstart.plugins.conform',
   require 'kickstart.plugins.blink-cmp',
@@ -39,7 +38,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -49,9 +48,9 @@ require('lazy').setup({
   { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
+  -- Or use fzf-lua!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
+  -- you can continue same window with `<space>sr` which resumes the last search
 }, { ---@diagnostic disable-line: missing-fields
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
