@@ -16,7 +16,8 @@ return {
           around_next = 'aa',
           inside_next = 'ii',
         },
-        n_lines = 500,
+        -- Keep textobject searches local and expand-region selections responsive.
+        n_lines = 20,
       }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
@@ -26,18 +27,7 @@ return {
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function() return '%2l:%-2v' end
+      require('custom.statusline').setup()
 
       -- Start screen inspired by the classic Vim startify setup.
       local starter = require 'mini.starter'
