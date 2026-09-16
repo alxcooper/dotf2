@@ -16,7 +16,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "claude-fable-5-1[1m]",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
@@ -26,11 +26,15 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "tui": "fullscreen",
-  "skipAutoPermissionPrompt": true,
   "modelSettings": {
     "claude-fable-5": {
       "effortLevel": "xhigh"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "high"
     }
-  }
+  },
+  "tui": "fullscreen",
+  "switchModelsOnFlag": false,
+  "skipAutoPermissionPrompt": true
 }
