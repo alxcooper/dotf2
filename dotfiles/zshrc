@@ -340,3 +340,10 @@ if [[ ${ZSHRC_PROFILE:-0} == 1 && -n "$_zsh_start_time" && -n "${EPOCHREALTIME:-
   printf 'zshrc loaded in %.0fms\n' $(( (EPOCHREALTIME - _zsh_start_time) * 1000 ))
 fi
 unset _zsh_start_time
+
+# Qwen Code PATH block begin
+export PATH="$HOME/.local/bin:$PATH"
+# Qwen Code PATH block end
+
+# kimi-code
+export PATH="$HOME/.kimi-code/bin:$PATH"

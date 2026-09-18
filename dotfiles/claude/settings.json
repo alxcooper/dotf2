@@ -16,7 +16,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5-1[1m]",
   "enableAllProjectMcpServers": true,
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
