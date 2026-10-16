@@ -28,6 +28,7 @@ return {
       require('mini.surround').setup()
 
       require('custom.statusline').setup()
+      require('custom.tabline').setup()
 
       -- Start screen inspired by the classic Vim startify setup.
       local starter = require 'mini.starter'
@@ -240,6 +241,7 @@ return {
         callback = set_starter_highlights,
       })
 
+      require('custom.starter').setup()
       starter.setup {
         evaluate_single = true,
         header = starter_header,

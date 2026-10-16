@@ -9,7 +9,7 @@ cursor-color = "#008f11"
 
 font-family = "FiraCode Nerd Font Mono"
 font-style = "Retina"
-font-size = 13
+font-size = 14
 adjust-underline-position = 4
 
 window-padding-x = 2
