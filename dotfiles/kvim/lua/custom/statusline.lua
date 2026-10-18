@@ -109,7 +109,7 @@ function M.render(active)
   if active then
     parts[#parts + 1] = hl('PositionEdge') .. icon('', ' ') .. hl('Position')
   end
-  parts[#parts + 1] = ' %5l:%-4c '
+  parts[#parts + 1] = ' %4l/%L:%-3c '
   return table.concat(parts)
 end
 
