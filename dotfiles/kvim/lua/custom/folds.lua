@@ -39,7 +39,7 @@ local function setup_view_autocmds()
       if vim.wo.diff or not is_real_file_buffer(args.buf) then return end
 
       local ok = pcall(vim.cmd, 'silent loadview')
-      -- Older views may contain Diffview's foldmethod and foldlevel=0.
+      -- Older views may contain foldmethod=diff and foldlevel=0.
       -- Keep their cursor position, but use open normal folds in this window.
       if vim.wo.foldmethod == 'diff' then
         vim.wo.foldmethod = 'indent'

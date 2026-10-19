@@ -1,4 +1,4 @@
--- codediff.nvim — VSCode-style diffs, trial alongside diffview.nvim
+-- codediff.nvim — reviewing diffs and file history with VSCode-style rendering
 -- The native diff library is downloaded from GitHub releases on first use
 -- (`:CodeDiff install!` to re-download).
 -- Examples:
@@ -13,13 +13,17 @@ return {
     'esmuellert/codediff.nvim',
     cmd = 'CodeDiff',
     keys = {
-      { '<leader>gD', '<cmd>CodeDiff<cr>', desc = 'CodeDiff: open' },
+      { '<leader>gd', '<cmd>CodeDiff<cr>', desc = 'CodeDiff: open' },
       { '<leader>gL', '<cmd>CodeDiff history %<cr>', desc = 'CodeDiff: current file history' },
     },
     opts = {
       diff = {
+        layout = 'side-by-side', -- Toggle side-by-side/inline with t.
         -- Opt-in: detect code moved within a file (align with gm).
         compute_moves = true,
+      },
+      explorer = {
+        focus_on_select = true, -- Enter opens the file and focuses the diff pane.
       },
     },
   },

@@ -21,21 +21,27 @@ end
 local function describe(tab)
   local wins = vim.api.nvim_tabpage_list_wins(tab)
   local buf = vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(tab))
-  local lib = package.loaded['diffview.lib']
-  local diff = lib and lib.tabpage_to_view(tab) ~= nil or false
+  local codediff = package.loaded['codediff.ui.lifecycle']
+  local session = codediff and codediff.get_session(tab)
+  local diff = session ~= nil
   local modified = false
   for _, win in ipairs(wins) do
     if vim.api.nvim_win_get_config(win).relative == '' then
       local candidate = vim.api.nvim_win_get_buf(win)
       modified = modified or vim.bo[candidate].modified
-      diff = diff or vim.bo[candidate].filetype == 'DiffviewFiles' or vim.bo[candidate].filetype == 'DiffviewFileHistory'
       -- Focusing a sidebar should not replace the file's tab label.
       if vim.bo[buf].buftype ~= '' and vim.bo[candidate].buftype == '' then buf = candidate end
     end
   end
   local path = vim.api.nvim_buf_get_name(buf)
   local name = vim.fn.fnamemodify(path, ':t')
-  if vim.bo[buf].filetype == 'ministarter' then
+  if session then
+    -- Inline and staged diffs may use unnamed scratch buffers. The session
+    -- paths identify the selected file regardless of which pane has focus.
+    path = session.modified and session.modified.absolute or ''
+    if path == '' then path = session.original and session.original.absolute or '' end
+    name = path ~= '' and vim.fn.fnamemodify(path, ':t') or 'Changes'
+  elseif vim.bo[buf].filetype == 'ministarter' then
     name = 'Welcome'
   elseif vim.bo[buf].buftype == 'terminal' then
     name = 'Terminal'
@@ -140,6 +146,12 @@ function M.setup()
   vim.api.nvim_create_autocmd({ 'BufModifiedSet', 'BufFilePost', 'WinEnter', 'WinClosed' }, {
     group = group,
     callback = function() vim.cmd.redrawtabline() end,
+  })
+  vim.api.nvim_create_autocmd('User', {
+    group = group,
+    pattern = { 'CodeDiffOpen', 'CodeDiffClose', 'CodeDiffFileSelect' },
+    -- CodeDiffClose fires before session cleanup, so redraw after it finishes.
+    callback = function() vim.schedule(function() vim.cmd.redrawtabline() end) end,
   })
 end
 

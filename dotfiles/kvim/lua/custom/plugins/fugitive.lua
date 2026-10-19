@@ -22,21 +22,13 @@ local function close_status()
 end
 
 local function git_status()
-  local lib = package.loaded['diffview.lib']
-  local view = lib and lib.get_current_view()
-  local git_dir = view and view.adapter.ctx.dir or vim.fn.FugitiveGitDir()
+  local git_dir = vim.fn.FugitiveGitDir()
   if git_dir == '' then
     vim.cmd.Git()
     return
   end
   git_dir = vim.uv.fs_realpath(git_dir) or git_dir
   local origin = vim.api.nvim_get_current_tabpage()
-  if view then
-    origin = lib.get_prev_non_view_tabpage()
-    if require('diffview').close(nil, { force = false }) == false then return end
-    origin = origin or vim.api.nvim_get_current_tabpage()
-  end
-
   if vim.t[origin].custom_git_status_dir then origin = vim.t[origin].custom_git_return_tab end
   local target
   for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
@@ -54,7 +46,7 @@ local function git_status()
   else
     vim.cmd.tabnew()
   end
-  -- Use an explicit Fugitive URL: closing Diffview may return to another repo.
+  -- Use an explicit Fugitive URL to keep the status tied to its repository.
   if vim.api.nvim_buf_get_name(0) ~= status then vim.cmd('keepalt edit ' .. vim.fn.fnameescape(status)) end
   vim.cmd.Git()
   vim.t.custom_git_status_dir = git_dir

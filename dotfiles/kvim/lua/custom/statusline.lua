@@ -8,34 +8,8 @@ local function escape(text)
   return (text:gsub('%%', '%%%%'))
 end
 
--- Read the layout for this window, not buffer-local tags: the working file can
--- also be open in an ordinary editor window at the same time.
-local function diff_context()
-  local lib = package.loaded['diffview.lib']
-  if not lib then return end
-  local view = lib.get_current_view()
-  if not view or not view.cur_layout then return end
-  for _, win in ipairs(view.cur_layout.windows) do
-    if win.id == vim.api.nvim_get_current_win() and win.file then
-      local file = win.file
-      local rev = file.rev
-      if not rev then return { path = file.path, label = 'DIFF', accent = 'Blue' } end
-      local types = require('diffview.vcs.rev').RevType
-      if rev.type == types.LOCAL then
-        return { path = file.path, label = 'WORKTREE', accent = 'Green' }
-      elseif rev.type == types.STAGE then
-        local label = ({ [0] = 'INDEX', [1] = 'BASE', [2] = 'OURS', [3] = 'THEIRS' })[rev.stage] or 'INDEX'
-        return { path = file.path, label = label, accent = 'Blue' }
-      elseif rev.type == types.COMMIT then
-        return { path = file.path, label = (rev.commit or ''):sub(1, 8), accent = 'Purple' }
-      end
-      return { path = file.path, label = 'DIFF', accent = 'Blue' }
-    end
-  end
-end
-
-local function filename(context, width)
-  local name = context and context.path or vim.api.nvim_buf_get_name(0)
+local function filename(width)
+  local name = vim.api.nvim_buf_get_name(0)
   if name == '' then return '[No Name]' end
   if vim.bo.buftype == 'terminal' then return 'Terminal' end
   -- Keep one parent directory for context; the left-hand file tree has the rest.
@@ -69,24 +43,14 @@ function M.render(active)
   local statusline = require 'mini.statusline'
   local width = vim.api.nvim_win_get_width(0)
   local base = active and 'Body' or 'Muted'
-  local panel = ({ DiffviewFiles = 'FILES', DiffviewFileHistory = 'HISTORY' })[vim.bo.filetype]
-  if panel then
-    return badge(icon('󰙅 ', '') .. panel, 'Blue', active) .. hl(base) .. '%= %l/%L '
-  end
-
-  local context = diff_context()
   local parts = { hl(base) }
-  if context then
-    parts[#parts + 1] = badge(icon(' ', '') .. context.label, context.accent, active)
-  elseif active then
-    parts[#parts + 1] = mode_badge(width)
-  end
-  if active and not context and width >= 90 then
+  if active then parts[#parts + 1] = mode_badge(width) end
+  if active and width >= 90 then
     local branch = statusline.section_git { trunc_width = 0 }
     if branch ~= '' then parts[#parts + 1] = hl('Detail') .. ' ' .. escape(branch) .. ' ' .. hl(base) end
   end
 
-  parts[#parts + 1] = ' %<' .. icon('󰈙 ', '') .. escape(filename(context, width))
+  parts[#parts + 1] = ' %<' .. icon('󰈙 ', '') .. escape(filename(width))
   if vim.bo.modified then parts[#parts + 1] = hl(active and 'Changed' or 'ChangedInactive') .. ' [+]' .. hl(base) end
   if vim.bo.readonly or not vim.bo.modifiable then parts[#parts + 1] = ' ' .. icon('', 'RO') end
   parts[#parts + 1] = '%='
@@ -99,7 +63,7 @@ function M.render(active)
     }
     if diagnostics ~= '' then parts[#parts + 1] = hl('Warning') .. escape(diagnostics) .. ' ' .. hl(base) end
     local changes = vim.b.gitsigns_status
-    if not context and width >= 120 and changes and changes ~= '' then
+    if width >= 120 and changes and changes ~= '' then
       parts[#parts + 1] = hl('Detail') .. ' ' .. escape(changes) .. ' ' .. hl(base)
     end
   end
