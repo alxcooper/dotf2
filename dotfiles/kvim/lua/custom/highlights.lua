@@ -2,6 +2,8 @@ local M = {}
 
 function M.setup()
   local function apply()
+    -- Keep fix markers readable without an error-colored badge.
+    vim.api.nvim_set_hl(0, 'TodoFgFIX', { fg = '#b87972', bg = 'NONE', ctermfg = 138 })
     for _, name in ipairs { 'VirtColumnMuted', 'WinSeparator' } do
       vim.api.nvim_set_hl(0, name, { fg = '#444444', bg = 'NONE', ctermfg = 238 })
     end
