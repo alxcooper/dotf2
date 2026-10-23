@@ -1,4 +1,6 @@
-@RTK.md
+## Commit messages
+
+Never add a `Co-Authored-By:` trailer (or any other Claude attribution line) to git commit messages.
 
 ## Bash path discipline
 

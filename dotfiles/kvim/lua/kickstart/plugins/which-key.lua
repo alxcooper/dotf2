@@ -12,18 +12,31 @@
 -- Then, because we use the `opts` key (recommended), the configuration runs
 -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
+-- Last key pressed, to tell a mouse selection apart from an explicit `v`
+local last_key = ''
+
 ---@module 'lazy'
 ---@type LazySpec
 return {
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter',
+    init = function()
+      vim.on_key(function(key) last_key = vim.fn.keytrans(key) end)
+    end,
     ---@module 'which-key'
     ---@type wk.Opts
     ---@diagnostic disable-next-line: missing-fields
     opts = {
       -- delay between pressing a key and opening which-key (milliseconds)
       delay = 0,
+      -- Don't pop up on entering Visual mode with V/<C-V> (which-key default) or
+      -- with the mouse (double-click, drag), only once a key is pressed in it.
+      -- An explicit `v` still shows it right away.
+      defer = function(ctx)
+        if ctx.mode == 'v' then return last_key:find 'Mouse>$' ~= nil or last_key:find 'Drag>$' ~= nil end
+        return ctx.mode == 'V' or ctx.mode == '<C-V>'
+      end,
       icons = { mappings = vim.g.have_nerd_font },
 
       -- Document existing key chains

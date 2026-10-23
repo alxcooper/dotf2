@@ -7,7 +7,8 @@ background = "#0e100a"
 foreground = "#c0c0c0"
 cursor-color = "#008f11"
 
-font-family = "FiraCode Nerd Font Mono"
+# font-family = "FiraCode Nerd Font Mono"
+font-family = "Nordwand Mono"
 font-style = "Retina"
 font-size = 14
 adjust-underline-position = 4

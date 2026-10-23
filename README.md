@@ -40,12 +40,12 @@ make install tags=git       # Configure git only
 
 Available tags: `brew`, `git`, `zsh`, `vim`, `nvim`, `kvim`, `lvim`, `tmux`, `helix`, `ghostty`, `starship`, `bat`, `devtools`, `claude`.
 
-## Claude Code / RTK
+## Claude Code
 
 The `claude` tag installs and configures Claude Code:
-- Symlinks `~/.claude/settings.json` and `~/.claude/CLAUDE.md` from `dotfiles/claude/`
+- Symlinks `~/.claude/CLAUDE.md` from `dotfiles/claude/`
+- Copies `~/.claude/settings.json` only if it is missing, since Claude Code writes model/effort into it; port lasting changes back by hand (`diff <(jq -S . ~/.claude/settings.json) <(jq -S . dotfiles/claude/settings.json)`)
 - Renders `~/.mcp.json` from the Jinja template, with Trello/Datadog secrets pulled from the vault
-- Installs [RTK](https://github.com/rtk-ai/rtk) (Rust Token Killer) and runs `rtk init -g` to install the token-saving hook into Claude Code (idempotent — skipped if `~/.claude/RTK.md` already exists)
 
 ## Post-Installation
 

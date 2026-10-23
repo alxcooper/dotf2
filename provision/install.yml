@@ -38,12 +38,12 @@
           - htop
           - imagemagick
           - jpegoptim
+          - jq
           - lazygit
           - mise
           - neovim
           - pwgen
           - rg
-          - rtk
           - shared-mime-info
           - starship
           - terraform
@@ -209,8 +209,9 @@
       file: path=~/.claude state=directory
       tags: claude
 
-    - name: symlink claude settings
-      file: src={{ dotfiles_dir }}/claude/settings.json dest=~/.claude/settings.json state=link force=yes
+    # Copied, not symlinked: Claude Code writes model/effort/autoMode into it
+    - name: copy claude settings if missing
+      copy: src={{ dotfiles_dir }}/claude/settings.json dest=~/.claude/settings.json force=no
       tags: claude
 
     - name: symlink claude md
@@ -227,10 +228,4 @@
         src: "{{ dotfiles_dir }}/claude/mcp.json.j2"
         dest: ~/.mcp.json
         mode: '0600'
-      tags: claude
-
-    - name: initialize rtk for Claude Code
-      command: rtk init -g
-      args:
-        creates: ~/.claude/RTK.md
       tags: claude
