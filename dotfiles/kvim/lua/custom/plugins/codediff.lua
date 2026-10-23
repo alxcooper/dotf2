@@ -25,6 +25,12 @@ return {
       explorer = {
         focus_on_select = true, -- Enter opens the file and focuses the diff pane.
       },
+      keymaps = {
+        explorer = {
+          -- Single click opens a file (plugin only maps double click).
+          select = { '<CR>', '<LeftRelease>' },
+        },
+      },
     },
   },
 }
