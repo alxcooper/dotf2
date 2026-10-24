@@ -7,9 +7,27 @@
     dotfiles_dir: '{{ lookup("env", "PWD") }}/dotfiles'
     ansible_python_interpreter: /opt/homebrew/bin/python3.13
   tasks:
-    - name: tap bun repository
+    - name: tap third-party repositories
       homebrew_tap:
-        name: oven-sh/bun
+        name:
+          - oven-sh/bun
+          - hashicorp/tap
+      tags: brew
+
+    # Homebrew refuses to load formulae from taps that aren't explicitly trusted
+    - name: list trusted taps
+      command: brew trust --json=v1
+      register: brew_trust
+      changed_when: false
+      check_mode: false
+      tags: brew
+
+    - name: trust third-party taps
+      command: brew trust --tap {{ item }}
+      loop:
+        - oven-sh/bun
+        - hashicorp/tap
+      when: item not in (brew_trust.stdout | from_json).taps
       tags: brew
 
     - name: install homebrew packages
