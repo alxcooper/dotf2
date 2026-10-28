@@ -9,7 +9,7 @@
   line-numbers = true
   hunk-header-style = line-number syntax
   hunk-header-decoration-style = omit
-  syntax-theme = kanagawa
+  syntax-theme = habamax
 
 [merge]
   conflictstyle = zdiff3
