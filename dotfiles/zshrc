@@ -47,6 +47,8 @@ else
   export EDITOR='vim'
 fi
 export VISUAL="$EDITOR"
+# zsh picks the vi keymap when $EDITOR/$VISUAL contains "vi" (nested shells inherit it); force emacs.
+bindkey -e
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # History
